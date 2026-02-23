@@ -1,32 +1,55 @@
 # blackroad-warehouse-robot
 
-[![GitHub](https://img.shields.io/badge/GitHub-BlackRoad-OS-purple?style=for-the-badge&logo=github)](https://github.com/BlackRoad-OS/blackroad-warehouse-robot)
-[![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)](https://github.com/BlackRoad-OS/blackroad-warehouse-robot)
-[![BlackRoad](https://img.shields.io/badge/BlackRoad-OS-black?style=for-the-badge)](https://blackroad.io)
+> Warehouse robot task coordination, pick list management, zone assignment, and S-shape route optimization.
 
-# 🖤🛣️ BlackRoad Warehouse Robot
+## Features
 
-Part of the BlackRoad Product Empire - 350+ enterprise solutions
+- **Zone management** with configurable aisles/shelves
+- **Pick list creation** from SKU:quantity pairs
+- **Automatic task assignment** to idle robots
+- **S-shape + nearest-pick sequencing** to minimize travel distance
+- **Task completion tracking** with automatic robot status updates
+- **ASCII warehouse map** showing zones and robot positions
+- **Battery and payload tracking** per robot
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
-./blackroad-warehouse-robot.sh
+pip install -e .
+
+# Setup zones and inventory
+python src/warehouse_robot.py add-zone ZoneA 1 5 1 20
+python src/warehouse_robot.py add-item SKU001 "Widget" ZoneA 2 5 "A1" 100
+python src/warehouse_robot.py add-item SKU002 "Gadget" ZoneA 3 8 "B3" 50
+
+# Register robot
+python src/warehouse_robot.py add-robot R001 ZoneA --speed 1.5 --payload 30
+
+# Create and assign a pick list
+python src/warehouse_robot.py create-picklist ORD-001 --items "SKU001:3,SKU002:2"
+python src/warehouse_robot.py assign <pick_list_id>
+
+# Monitor status
+python src/warehouse_robot.py status
+python src/warehouse_robot.py map
 ```
 
-## 🎨 BlackRoad Design System
+## CLI Reference
 
-- **Hot Pink**: #FF1D6C
-- **Amber**: #F5A623  
-- **Electric Blue**: #2979FF
-- **Violet**: #9C27B0
+| Command | Description |
+|---------|-------------|
+| `add-zone NAME AISLE_S AISLE_E SHELF_S SHELF_E` | Create zone |
+| `add-robot NAME ZONE [--speed] [--payload]` | Register robot |
+| `add-item SKU NAME ZONE AISLE SHELF BIN QTY` | Register item |
+| `create-picklist ORDER --items SKU:QTY,...` | Create pick list |
+| `assign PICK_LIST_ID` | Assign to robots |
+| `complete TASK_ID` | Mark task done |
+| `status` | Robot fleet status |
+| `list-picklists` | All pick lists |
+| `map` | ASCII warehouse map |
 
-## 📚 Documentation
+## Development
 
-Full docs: https://docs.blackroad.io
-
-## 🖤 BlackRoad Empire
-
-Part of 350+ products across 46 categories. Built with ∞ vision.
-
-**BlackRoad OS, Inc.** | Built with Claude
+```bash
+pytest tests/ -v --cov=src
+```
